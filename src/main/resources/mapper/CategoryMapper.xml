@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xiaojian.pick.mapper.CategoryMapper" >
+  <resultMap id="BaseResultMap" type="com.xiaojian.pick.entity.Category" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="cate_name" property="cateName" jdbcType="VARCHAR" />
+    <result column="cate_icon" property="cateIcon" jdbcType="VARCHAR" />
+    <result column="sort" property="sort" jdbcType="INTEGER" />
+  </resultMap>
+
+<!-- 根据 id 查询 -->
+  <select id="findById" parameterType="Integer" resultMap="BaseResultMap">
+    select * from category where id = #{id}
+  </select>
+
+<!--  // 查询所有 商品分类-->
+<!--  List<Category> findAll();-->
+  <select id="findAll" resultMap="BaseResultMap">
+    SELECT * FROM category ORDER BY sort
+  </select>
+<!--  // 查询所有商品分类 数量-->
+<!--  Long getCount();-->
+  <select id="getCount" resultType="Long">
+    select count(*) from category
+  </select>
+
+
+<!--  // 增加 商品分类-->
+<!--  int addCategory(Category category);-->
+  <insert id="addCategory" parameterType="com.xiaojian.pick.entity.Category">
+    insert into category(cate_name,cate_icon,sort)
+    values(#{cateName},#{cateIcon},#{sort})
+  </insert>
+
+<!--  // 修改 商品分类-->
+<!--  int updateCategory(Category category);-->
+  <update id="updateCategory" parameterType="com.xiaojian.pick.entity.Category">
+    update category
+    <set>
+      <if test="cateName != null">
+        cate_name = #{cateName},
+      </if>
+      <if test="cateIcon">
+        cate_icon = #{cateIcon},
+      </if>
+      <if test="sort != null">
+        sort = #{sort},
+      </if>
+    </set>
+    where id = #{id}
+  </update>
+
+<!--  // 删除 商品分类-->
+<!--  int deleteCategory(String id);-->
+  <delete id="deleteCategory" parameterType="Integer">
+    delete from category where id = #{id}
+  </delete>
+
+</mapper>

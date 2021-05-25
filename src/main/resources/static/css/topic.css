@@ -1,0 +1,169 @@
+body{
+    background-color: #f4f4f4;
+}
+.topic_container{
+    background-color: #ffffff;
+    margin-bottom: 25px;
+}
+.topic_wrap{
+    width: 96%;
+    margin: auto;
+}
+
+.userInfo{
+    display: flex;
+    padding: 12px 10px;
+    border-bottom: 1px solid #f4f4f4;
+}
+.user_head_img{
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+}
+.user_head_img img{
+    width: 100%;
+    height: 100%;
+}
+.nickName{
+    margin-left: 15px;
+    line-height: 50px;
+}
+.topic_main{
+    margin-top: 15px;
+}
+.topic_title{
+    font-size: 17px;
+    font-weight: 700;
+}
+.topic_attention_wrap{
+    display: flex;
+    justify-content: space-between;
+    margin: 5px 0px;
+}
+.publish_date{
+    color: #ccc;
+}
+.topic_attention{
+    display: inline-block;
+    color: #fff;
+    font-size: 14px;
+    padding: 5px;
+    background-color: #3ac0fb;
+    border-radius: 5px;
+    margin: 5px;
+}
+.iconhao{
+    font-size: 14px;
+}
+.count_wrap{
+    display: flex;
+}
+.line{
+    color: #515151;
+    margin: auto 12px;
+}
+.iconfont{
+    vertical-align: middle;
+}
+.iconliulan1{
+    color: #cbcbcb;
+}
+.count_text{
+    font-size: 12px;
+    color: #515151;
+}
+
+
+.topic_content{
+    font-size: 16px;
+    margin: 10px auto;
+    width: 96%;
+    padding-bottom: 25px;
+}
+.topic_img_wrap{
+    width: 96%;
+    margin: auto;
+    padding-bottom: 25px;
+}
+.topic_img_item{
+    width: 100%;
+}
+.topic_img_item img{
+    width: 100%;
+    margin-bottom: 2px;
+}
+
+/* 评论区 */
+.emptyOfComment{
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+    color: #999;
+}
+.comment_container{
+    margin-bottom: 50px;
+}
+.comment_wrap{
+    background-color: #ffffff;
+    padding: 10px 0px;
+}
+.comment_head_title{
+    border-left: 5px solid #3bc1fb;
+    padding: 3px 8px;
+    margin-left: 10px;
+}
+.comment_line{
+    border: 1px solid #f4f4f4;
+    margin-top: 5px;
+}
+
+.comment_left{
+    width: 15%;
+}
+.comment_right{
+    width: 80%;
+}
+.head_img{
+    width: 40px;
+    height: 40px;
+}
+.head_img img{
+    width: 100%;
+    height: 100%;
+}
+.comment_item{
+    display: flex;
+    padding: 10px;
+    border-bottom: 1px solid #f4f4f4;
+}
+.comment_head{
+    display: flex;
+    justify-content: space-between;
+}
+
+.comment_nickName{
+    color:#515151;
+}
+.level{
+    color: #3bc1fb;
+}
+
+.comment_content{
+    margin: 10px auto;
+}
+.btn_wrap{
+    width: 100%;
+    background-color: white;
+    border-top: 1px solid #f4f4f4;
+    position: fixed;
+    bottom: 0px;
+    left: 0px;
+    display: flex;
+    justify-content: center;
+}
+.btn_wrap button{
+    margin: 10px;
+}
+
+
+

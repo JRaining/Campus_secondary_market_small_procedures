@@ -1,0 +1,34 @@
+
+spring:
+  profiles:
+    active: dev   # 使用dev开发环境配置
+  redis:    # redis 配置
+    host: 112.124.1.187
+    port: 6379
+    password: 2436
+    lettuce:
+      pool:
+        max-active: 10
+        max-idle: 6
+        min-idle: 2
+        max-wait: 1000
+      shutdown-timeout: 100
+
+  thymeleaf:
+    cache: false   #开启 thymeleaf 缓存
+
+# mybatis 使用注解配置，开启驼峰命名法
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.xiaojian.pick.entity
+  configuration:
+    map-underscore-to-camel-case: true
+# mybatis 分页框架 pagehelper
+pagehelper:
+  helper-dialect: mysql
+  reasonable: false   # 分页合理化:否
+  support-methods-arguments: true
+  params: count=countSql
+
+# 阿里云OSS服务
+

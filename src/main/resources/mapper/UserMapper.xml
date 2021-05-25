@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaojian.pick.mapper.UserMapper">
+  <resultMap id="BaseResultMap" type="com.xiaojian.pick.entity.User">
+    <result column="id" jdbcType="INTEGER" property="id" />
+    <result column="openid" jdbcType="VARCHAR" property="openid" />
+    <result column="nickName" jdbcType="VARCHAR" property="nickName" />
+    <result column="avatarUrl" jdbcType="VARCHAR" property="avatarUrl" />
+    <result column="gender" jdbcType="TINYINT" property="gender" />
+    <result column="country" jdbcType="VARCHAR" property="country" />
+    <result column="province" jdbcType="VARCHAR" property="province" />
+    <result column="city" jdbcType="VARCHAR" property="city" />
+    <result column="have_user_info" jdbcType="CHAR" property="haveUserInfo" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="qq_num" jdbcType="VARCHAR" property="qqNum" />
+    <result column="wechat_num" jdbcType="VARCHAR" property="wechatNum" />
+  </resultMap>
+
+<!-- 动态查询条件 -->
+  <sql id="select_param">
+    <where>
+      <if test="openid != null and openid != ''">
+        openid = #{openid}
+      </if>
+      <if test="nickName != null and nickName != ''">
+        and nickName like #{nickName}
+      </if>
+      <if test="qqNum != null and qqNum != ''">
+        and qq_num = #{qqNum}
+      </if>
+      <if test="wechatNum != null and wechatNum != ''">
+        and wechat_num = #{qqNum}
+      </if>
+    </where>
+  </sql>
+
+
+<!-- 根据 id 查询 -->
+  <select id="findById" parameterType="Integer" resultMap="BaseResultMap">
+    select * from user where id = #{id}
+  </select>
+<!--      // 根据条件查询 用户列表
+    List<User> findByParam();-->
+  <select id="findByParam" parameterType="com.xiaojian.pick.entity.User" resultMap="BaseResultMap">
+    select * from user
+    <include refid="select_param"></include>
+    order by create_time desc
+  </select>
+
+<!--      // 根据条件查询 用户列表数量
+  Long getCount();-->
+  <select id="getCount" parameterType="com.xiaojian.pick.entity.User" resultType="Long">
+    select count(*) from user
+    <include refid="select_param"></include>
+  </select>
+
+<!--  // 根据 openid 查询用户信息-->
+<!--      User findByOpenid(Integer openid);-->
+  <select id="findByOpenid" parameterType="String" resultMap="BaseResultMap">
+    select * from user where openid = #{openid}
+  </select>
+
+<!--  // 添加用户信息-->
+<!--  int addUser(User user);-->
+  <insert id="addUser" parameterType="com.xiaojian.pick.entity.User" useGeneratedKeys="true" keyProperty="id">
+    insert into user(openid, nickName, avatarUrl, gender, country, province, city,create_time, qq_num, wechat_num)
+    values(#{openid},#{nickName},#{avatarUrl},#{gender},#{country},#{province},#{city},#{createTime},#{qqNum},#{wechatNum})
+  </insert>
+
+<!--  // 更新用户信息-->
+<!--  int updateUser(User user);-->
+  <update id="updateUser" parameterType="com.xiaojian.pick.entity.User">
+    update user
+    <set>
+      <if test="nickName != null and nickName != ''">
+        nickName = #{nickName},
+      </if>
+      <if test="avatarUrl != null and avatarUrl != ''">
+        avatarUrl = #{avatarUrl},
+      </if>
+      <if test="gender != null and gender != ''">
+        gender = #{gender},
+      </if>
+      <if test="haveUserInfo != null and haveUserInfo != ''">
+        have_user_info = #{haveUserInfo},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime},
+      </if>
+      <if test="qqNum != null and qqNum != ''">
+        qq_num = #{qqNum},
+      </if>
+      <if test="wechatNum != null and wechatNum != ''">
+        wechat_num = #{wechatNum},
+      </if>
+    </set>
+    where openid = #{openid}
+  </update>
+</mapper>

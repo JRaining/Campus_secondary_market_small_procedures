@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaojian.pick.mapper.CommentMapper">
+  <resultMap id="BaseResultMap" type="com.xiaojian.pick.entity.Comment">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="content" jdbcType="VARCHAR" property="content" />
+    <result column="publish_date" property="publishDate" jdbcType="TIMESTAMP" />
+    <result column="state" jdbcType="INTEGER" property="state" />
+    <result column="topic_id" jdbcType="INTEGER" property="topicId" />
+  </resultMap>
+
+<!--  加载用户信息  -->
+  <resultMap id="ResultMapWithUser" type="com.xiaojian.pick.entity.Comment" extends="BaseResultMap" >
+    <association property="user" javaType="User"
+                 select="com.xiaojian.pick.mapper.UserMapper.findById" column="user_id">
+    </association>
+  </resultMap>
+
+<!--  // 根据帖子 id 查询 评论列表-->
+<!--  List<Comment> findByTopicId(Integer topicId);-->
+  <select id="findByTopicId" parameterType="Integer" resultMap="ResultMapWithUser">
+    select * from comment
+    where topic_id = #{topicId} and state = 1
+    order by publish_date desc
+  </select>
+
+
+<!--  // 添加帖子的评论-->
+<!--  int addComment(Comment comment);-->
+  <insert id="addComment" parameterType="com.xiaojian.pick.entity.Comment">
+    insert into comment(content, topic_id, user_id, publish_date, state)
+    values(#{content},#{topicId},#{user.id},#{publishDate},#{state})
+  </insert>
+
+<!--  // 修改评论状态-->
+<!--  int updateCommentState(Comment comment);-->
+  <update id="updateCommentState" parameterType="com.xiaojian.pick.entity.Comment">
+    update comment set state = #{state} where id = #{id}
+  </update>
+
+
+
+<!--  // 删除帖子的评论记录-->
+<!--  int deleteByTopicId(List<Integer> topicIds);-->
+  <delete id="deleteByTopicId" parameterType="Integer">
+    delete from comment where topic_id in
+    <foreach collection="list" item="id" open="(" close=")" separator=",">
+      #{id}
+    </foreach>
+  </delete>
+
+
+</mapper>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xiaojian.pick.mapper.AttentionMapper" >
+  <resultMap id="BaseResultMap" type="com.xiaojian.pick.entity.Attention" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+<!--  加载用户信息  -->
+    <association property="user" javaType="com.xiaojian.pick.entity.User">
+      <id column="id" property="id" />
+    </association>
+<!--  加载帖子信息  -->
+    <association property="topic" javaType="Topic"
+                 select="com.xiaojian.pick.mapper.TopicMapper.findByTopicId" column="topic_id">
+    </association>
+  </resultMap>
+
+
+<!--  // 根据用户 id 查询关注列表-->
+<!--  List<Attention> findByUserId(Integer userId);-->
+  <select id="findByUserId" parameterType="Integer" resultMap="BaseResultMap">
+    select * from attention
+    where user_id = #{userId}
+    order by create_time desc
+  </select>
+
+<!--  // 帖子id、用户id查询关注信息-->
+<!--  Attention findAttention(Attention attention);-->
+  <select id="findAttention" parameterType="com.xiaojian.pick.entity.Attention" resultMap="BaseResultMap">
+    select * from attention
+    where user_id = #{user.id} and topic_id = #{topic.id}
+  </select>
+
+<!--  // 删除关注话题-->
+<!--  int deleteAttention(Integer id);-->
+  <delete id="deleteAttention" parameterType="Integer">
+    delete from attention
+    where id = #{id}
+  </delete>
+
+
+<!--  // 帖子详情页面，取消关注话题-->
+<!--  int cancelAttention(Attention attention);-->
+  <delete id="cancelAttention" parameterType="com.xiaojian.pick.entity.Attention">
+    delete from attention
+    where user_id = #{user.id} and topic_id = #{topic.id}
+  </delete>
+
+
+
+<!--  // 添加关注话题信息-->
+<!--  int addAttention(Attention attention);-->
+  <insert id="addAttention" parameterType="com.xiaojian.pick.entity.Attention">
+    insert into attention(topic_id, user_id, create_time)
+    values(#{topic.id},#{user.id},#{createTime})
+  </insert>
+
+
+<!--  //  根据 topic_id 删除收藏记录-->
+<!--  int deleteByTopicId(List<Integer> topicIds);-->
+  <delete id="deleteByTopicId" parameterType="Integer">
+    delete from attention where topic_id in
+    <foreach collection="list" item="id" open="(" close=")" separator=",">
+      #{id}
+    </foreach>
+  </delete>
+
+
+</mapper>

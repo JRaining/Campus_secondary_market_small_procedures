@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>主体首页</title>
+    <link rel="stylesheet" href="layui/css/layui.css" th:href="@{/layui/css/layui.css}">
+    <link rel="stylesheet" href="fonts/iconfonts.css" th:href="@{/fonts/iconfonts.css}">
+    <script type="text/javascript" src="js/jquery.min.js" th:src="@{/js/jquery.min.js}"></script>
+    <style>
+        .wrap{
+
+        }
+        .commodity_div,.seek_div,.topic_div{
+            background-color: #f8f8f8;
+            display: inline-block;
+            padding: 10px;
+            overflow: hidden;
+            clear-after: both;
+        }
+        .commodity_div{
+            width: 660px;
+            height: 190px;
+        }
+        .seek_div{
+            width: 310px;
+            height: 190px;
+        }
+        .commodity_today,.seek_today,.seek_all,.topic_all,.topic_today,.topic_hot{
+            display: inline-block;
+            padding: 10px;
+            background-color: #cfcfcf;
+            border-radius: 5px;
+        }
+        .commodity_today{
+            width: 22%;
+            height: 120px;
+            overflow: hidden;
+            clear-after: both;
+        }
+        .today_count{
+            text-align: center;
+            line-height: 90px;
+        }
+        .today_count span{
+            color: #009688;
+            font-size: 40px;
+        }
+        .commodity_all{
+            display: inline-block;
+            padding: 10px 10px 0px 10px;
+            background-color: #cfcfcf;
+            border-radius: 5px;
+            width: 70%;
+            height: 130px;
+            overflow: hidden;
+            clear-after: both;
+        }
+        .commodity_all_item{
+            display: inline-block;
+            position: relative;
+            margin: auto 50px;
+        }
+
+        .publish_count{
+            position: absolute;
+            left: 5px;
+            top: 50px;
+        }
+        .publish_count span{
+            color: #009688;
+            font-size: 40px;
+        }
+
+        .seek_today,.seek_all{
+            width: 42%;
+            height: 120px;
+        }
+        .seek_count{
+            text-align: center;
+            line-height: 90px;
+        }
+        .seek_count span{
+            color: #009688;
+            font-size: 40px;
+        }
+    /*  帖子*/
+        .topic_div{
+            width: 550px;
+            height: 190px;
+        }
+        .topic_today,.topic_all,.topic_hot{
+            width: 28%;
+            height: 120px;
+        }
+        .topic_count{
+            text-align: center;
+            line-height: 90px;
+        }
+        .topic_count span{
+            color: #009688;
+            font-size: 40px;
+        }
+    </style>
+</head>
+<body style="background-color: #F2F2F2;" onload="showTime()">
+<div style="padding: 20px; background-color: #F2F2F2;">
+<!-- 欢迎 -->
+    <div class="layui-row layui-col-space15">
+        <div class="layui-card">
+            <div class="layui-card-body">
+                <blockquote class="layui-elem-quote">欢迎管理员：
+                    <span th:if="${session.currentUser != null}" style="color: red;">[[${session.currentUser.username}]]</span>
+                    <span th:if="${session.currentUser == null}" style="color: red;">admin</span>
+                    <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                    <div id="currTime" style="display: inline;"></div>
+                </blockquote>
+            </div>
+        </div>
+        <div class="layui-col-md2">
+            <div class="layui-card">
+                <div class="layui-card-header">待处理事件</div>
+                <div class="layui-card-body">
+                    举报信息
+                    <div style="height: 120px;width: 120px;border-radius:5px;margin: 0px auto;text-align: center;line-height: 120px;background-color: #f8f8f8;">
+                        <span style="color: red;font-size: 50px;">[[${result.informCount}]]</span>
+                        <i>条</i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-md10">
+            <div class="layui-card">
+                <div class="layui-card-header">数据统计</div>
+                <div class="layui-card-body">
+                    <div class="wrap">
+                        <div class="commodity_div">
+                            <h2>商品</h2>
+                            <hr>
+                            <div class="commodity_today">
+                                <h3>今日发布</h3>
+                                <div class="today_count"><span>[[${result.commodityToday}]]</span><i>&nbsp;&nbsp;条</i></div>
+                            </div>
+                            <div class="commodity_all">
+                                <h3>所有商品</h3>
+                                <div class="commodity_all_item">
+                                    出售中
+                                    <div class="publish_count"><span>[[${result.onOfferCommodity}]]</span>&nbsp;&nbsp;<i>件</i></div>
+                                </div>
+                                <div class="commodity_all_item">
+                                    售罄
+                                    <div class="publish_count"><span>[[${result.sellOutCommodity}]]</span>&nbsp;&nbsp;<i>件</i></div>
+                                </div>
+                                <div class="commodity_all_item">
+                                    下架
+                                    <div class="publish_count"><span>[[${result.outCommodity}]]</span>&nbsp;&nbsp;<i>件</i></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="seek_div">
+                            <h2>求购</h2>
+                            <hr/>
+                            <div class="seek_today">
+                                <h3>今日求购</h3>
+                                <div class="seek_count"><span>[[${result.seekToday}]]</span><i>&nbsp;&nbsp;条</i></div>
+                            </div>
+                            <div class="seek_all">
+                                <h3>所有求购</h3>
+                                <div class="seek_count"><span>[[${result.allSeek}]]</span><i>&nbsp;&nbsp;条</i></div>
+                            </div>
+                        </div>
+
+                        <div class="topic_div">
+                            <h2>帖子</h2>
+                            <hr/>
+                            <div class="topic_today">
+                                <h3>今日帖子</h3>
+                                <div class="topic_count"><span>[[${result.topicToday}]]</span><i>&nbsp;&nbsp;条</i></div>
+                            </div>
+                            <div class="topic_all">
+                                <h3>所有帖子</h3>
+                                <div class="topic_count"><span>[[${result.allTopic}]]</span><i>&nbsp;&nbsp;条</i></div>
+                            </div>
+                            <div class="topic_hot">
+                                <h3>热门帖子</h3>
+                                <div class="topic_count"><span>[[${result.hotTopic}]]</span><i>&nbsp;&nbsp;条</i></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<script>
+    function showTime(){
+        var currTime = new Date();
+        var YY = currTime.getFullYear();
+        var MM = currTime.getMonth() + 1;
+        var dd = currTime.getDate();
+        var hh = currTime.getHours();
+        var mm = currTime.getMinutes();
+        var ss = currTime.getSeconds();
+
+        // 少于10的数字（月份、日期、时分秒）,前面一位补零
+        MM = extra(MM);
+        dd = extra(dd);
+        hh = extra(hh);
+        mm = extra(mm);
+        ss = extra(ss);
+
+        document.getElementById("currTime").innerHTML = YY + "-" + MM + "-" + dd + "  " + hh + ":" + mm + ":" + ss;
+
+        setTimeout("showTime()",1000);
+    }
+
+
+    function extra(num){
+        if(num < 10){
+            return '0' + num;
+        } else{
+            return num;
+        }
+    }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,58 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>求购列表</title>
+    <link rel="stylesheet" href="layui/css/layui.css" th:href="@{/layui/css/layui.css}">
+    <link rel="stylesheet" href="fonts/iconfonts.css" th:href="@{/fonts/iconfonts.css}">
+    <script type="text/javascript" src="js/jquery.min.js" th:src="@{/js/jquery.min.js}"></script>
+    <script type="text/javascript" src="layui/layui.js" th:src="@{/layui/layui.js}"></script>
+    <script type="text/javascript" src="/js/inform.js" th:src="@{/js/inform.js}"></script>
+</head>
+<body>
+
+<!-- 表格数据 -->
+<table width="100%" class="layui-hide" id="informList" lay-filter="informList">
+
+</table>
+
+<!-- 行工具栏 -->
+<script type="text/html" id="barInform">
+    {{# if(d.state == false){  }}
+        <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="edit">查看详情</a>
+        <a class="layui-btn layui-btn-xs" lay-event="ok">完成处理</a>
+    {{# } else{  }}
+        已处理
+    {{# } }}
+</script>
+<!-- 头工具栏 -->
+<script type="text/html" id="toobarInform">
+    <button class="layui-btn layui-btn-sm layui-btn-primary" lay-event="refresh"><i class="iconfont iconshuaxin"></i>&nbsp;刷新</button>
+</script>
+
+<!-- 数据格式 -->
+<script type="text/html" id="userTpl">
+    {{d.user.nickName}}
+</script>
+<script type="text/html" id="commodityOrSeekTpl">
+    {{# if(d.commodity != null){  }}
+        <span class="layui-badge layui-btn-danger">商品</span>
+    {{# } else if(d.seek != null){ }}
+        <span class="layui-badge layui-bg-green">求购</span>
+    {{# } else if(d.topic != null){ }}
+        <span class="layui-badge layui-bg-blue">帖子</span>
+    {{# } }}
+</script>
+<script type="text/html" id="commodityTpl">
+    {{# if(d.commodity != null){  }}
+        {{d.commodity.title}}
+    {{# } else if(d.seek != null){ }}
+        {{d.seek.title}}
+    {{# } else if(d.topic != null){ }}
+        {{d.topic.theme}}
+    {{# } }}
+</script>
+
+
+</body>
+</html>

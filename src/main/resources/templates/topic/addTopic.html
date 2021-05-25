@@ -1,0 +1,188 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>发布帖子</title>
+    <link rel="stylesheet" href="layui/css/layui.css" th:href="@{/layui/css/layui.css}">
+    <link rel="stylesheet" href="fonts/iconfonts.css" th:href="@{/fonts/iconfonts.css}">
+    <script type="text/javascript" src="js/jquery.min.js" th:src="@{/js/jquery.min.js}"></script>
+    <script type="text/javascript" src="layui/layui.js" th:src="@{/layui/layui.js}"></script>
+
+    <style>
+
+        .float{
+            float:left;
+            width : 82px;
+            height: 82px;
+            overflow: hidden;
+            border: 1px solid #CCCCCC;
+            /*border-radius: 10px;*/
+            /*padding: 5px;*/
+            /*margin: 5px;*/
+        }
+        img{
+            position: relative;
+        }
+        .img_wrap{
+            width: 82px;
+            height: 82px;
+            text-align: center;
+            box-sizing: border-box;
+        }
+        .img_wrap img{
+            width:100%;
+            height:100%;
+        }
+        .delete{
+            width: 82px;
+            height:82px;
+            position: absolute;
+            text-align: center;
+            line-height: 82px;
+            z-index: 10;
+            font-size: 15px;
+            background-color: rgba(255,255,255,0.8);
+            color: #777;
+            opacity: 0;
+            transition-duration: 0.7s;
+        }
+        .delete:hover{
+            cursor: pointer;
+            opacity: 1;
+        }
+    </style>
+
+</head>
+<body>
+    <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px">
+        <legend>发布帖子</legend>
+    </fieldset>
+<!--    action="/topic/addTopic" method="post"-->
+    <form class="layui-form" id="topicForm" >
+<!--  主题-->
+        <div class="layui-form-item" >
+            <label class="layui-form-label">主题</label>
+            <div class="layui-input-block">
+                <input type="text" name="theme" id="theme" lay-verify="required"  placeholder="请输入帖子标题" class="layui-input" style="width:270px;">
+            </div>
+        </div>
+<!-- 帖子描述 -->
+        <div class="layui-form-item" >
+            <label class="layui-form-label">描述</label>
+            <div class="layui-input-block">
+                <textarea cols="40" rows="8" name="description" style="width:270px;" class="layui-textarea" lay-verify="required" placeholder="在这里详细描述下你发布的帖子"></textarea>
+            </div>
+        </div>
+<!-- 帖子图片-->
+        <div class="layui-form-item" >
+            <label class="layui-form-label">帖子图片</label>
+            <div class="layui-input-block" id="file_wrap">
+                <img src="/images/jiahao.png" class="layui-upload-img" id="photo" style="width: 82px;height: 82px;border: 1px solid #CCC;">
+                <p id="errorMsg"></p>
+                <input type="file" name="topicImgs" multiple id="file_input" lay-verify="required" style="display: none;"/>
+            </div>
+        </div>
+<!-- 提交 -->
+        <div class="layui-form-item" style="text-align: center;margin-top: 20px;">
+            <button id="submitBtn" class="layui-btn layui-btn-normal layui-btn-radius" lay-submit lay-filter="checkForm" style="width: 300px">
+                立即提交
+            </button>
+        </div>
+    </form>
+
+
+
+<script>
+    layui.use('form',function(){
+        var form = layui.form;
+
+    <!-- 预览多个图片，并获取图片信息 -->
+        $("#photo").click(function(){
+            $("#file_input").value = "";
+            $("#file_input").click();
+            $("#file_input").unbind('change');
+            $("#file_input").change(function(e){
+                // 文件数量
+                let fileCount = e.target.files.length;
+                for(let i = 0; i < fileCount ; i++){
+                    if(!e.target.files[i].name.match(/.jpg|.gif|.png|.jpeg|.bmp/i)){
+                        return layer.msg("上传图片格式不正确，请重新选择！");
+                    }
+                    var reader = new FileReader();
+                    reader.readAsDataURL(e.target.files[i]);
+                    reader.onload = function (event) {
+                        var result = '<div class="delete">delete</div><div class="img_wrap"><img class="subPic" src="' + event.target.result + '" alt="'+ e.target.files[i].name +'" /></div>';
+                        var father = document.createElement('div');
+                        father.innerHTML = result;
+                        father['className'] = 'float';
+                        document.getElementById("file_wrap").appendChild(father);
+
+                        // 删除选中预览图片
+                        father.onclick = function () {
+                            $(this).remove();
+                        }
+                    }
+
+                }
+            });
+        });
+
+
+    // 提交帖子
+        form.on('submit(checkForm)',function (data) {
+            var formData = new FormData($("#topicForm")[0]);
+
+            // 提交表单，将提交按钮禁用
+            $('#submitBtn').addClass("layui-btn-disabled").attr("disabled",true);
+            $.ajax({
+                type: 'post',
+                url: '/topic/addTopic',
+                data:formData,
+                contentType: false, //必须false才会自动加上正确的Content-Type,否则服务器无法识别
+                processData: false,//注意以上两个配置，不加报错：Uncaught TypeError: Illegal invocation
+                dataType: "json",
+                success: function(result){
+                    if(result.success){
+                        layer.msg(
+                            result.message,
+                            {
+                                icon:1,
+                                time: 1000
+                            },
+                            function(){
+                                var index = parent.layer.getFrameIndex(window.name);
+                                parent.layer.close(index);
+                                parent.layer.onload;
+                            }
+                        );
+                    }else{
+                        // 恢复提交按钮
+                        $('#submitBtn').removeClass("layui-btn-disabled").attr("disabled",false);
+                        layer.msg(
+                            result.message,
+                            {
+                                icon:2,
+                                time:1000
+                            }
+                        );
+                    }
+                },
+                error: function(){
+                    // 恢复提交按钮
+                    $('#submitBtn').removeClass("layui-btn-disabled").attr("disabled",false);
+                    layer.msg(
+                        "网络错误",
+                        {
+                            icon:2,
+                            time:2000
+                        }
+                    );
+                }
+            });
+            return false;
+        });
+    });
+</script>
+
+</body>
+</html>

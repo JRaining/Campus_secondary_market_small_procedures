@@ -1,0 +1,114 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>求购信息详情</title>
+    <link rel="stylesheet" href="layui/css/layui.css" th:href="@{/layui/css/layui.css}">
+    <link rel="stylesheet" href="fonts/iconfonts.css" th:href="@{/fonts/iconfonts.css}">
+    <script type="text/javascript" src="js/jquery.min.js" th:src="@{/js/jquery.min.js}"></script>
+    <script type="text/javascript" src="layui/layui.js" th:src="@{/layui/layui.js}"></script>
+    <script type="text/javascript" src="layui/layui.all.js" th:src="@{/layui/layui.all.js}"></script>
+</head>
+<body>
+<fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px">
+    <legend>求购信息详情</legend>
+</fieldset>
+<form class="layui-form" id="seekForm" >
+    <p>[[${errorMsg}]]</p>
+<!--  标题-->
+    <div class="layui-form-item" >
+        <label class="layui-form-label">标题</label>
+        <div class="layui-input-block">
+            <input disabled type="text" name="title" id="title" lay-verify="required"  placeholder="请输入标题" th:value="${seek.title}" class="layui-input" style="width:270px;">
+        </div>
+    </div>
+<!-- 价格-->
+    <div class="layui-form-item">
+        <label class="layui-form-label">价格</label>
+        <div class="layui-input-block">
+            <input disabled type="text" name="minPrice" id="minPrice" class="layui-input" th:value="${seek.minPrice}" lay-verify="require|number|compare" style="width: 100px;display: inline;text-align: center;" placeholder="最低价格"/> ~
+            <input disabled type="text" name="maxPrice" id="maxPrice" class="layui-input" th:value="${seek.maxPrice}" lay-verify="require|number" style="width: 100px;display: inline;text-align: center;" placeholder="最高价格"/> 元
+            <p id="errorMsg"></p>
+        </div>
+    </div>
+<!-- 备注 -->
+    <div class="layui-form-item" >
+        <label class="layui-form-label">备注</label>
+        <div class="layui-input-block">
+                <textarea disabled cols="20" rows="5" style="width:270px;" name="remark" class="layui-textarea" lay-verify="required" placeholder="在这里详细描述下你发布的商品">[[${seek.remark}]]</textarea>
+        </div>
+    </div>
+    <!-- 提交 -->
+    <div class="layui-form-item" style="text-align: center;margin-top: 20px;">
+        <!-- 求购信息 id -->
+        <input type="hidden" id="seekId" th:value="${seek.id}">
+        <!-- 求购信息发布者 id -->
+        <input type="hidden" id="userId" th:value="${seek.user.id}" />
+        <button type="button" class="layui-btn layui-btn-disabled" th:if="${seek.state == 0}">
+            已删除
+        </button>
+        <button class="layui-btn layui-btn-warm " id="delSeek" th:if="${seek.state == 1}">
+            删除
+        </button>
+        <button class="layui-btn layui-btn-primary" id="closeBtn" style="width: 100px;margin: 20px 20px;">
+            关闭
+        </button>
+    </div>
+</form>
+
+<script>
+    $("#delSeek").on('click',function(){
+        // 求购信息
+        let seekId = $("#seekId").val();
+        let title = $("#title").val();
+        // 发布者
+        let userId = $("#userId").val();
+    console.log(seekId + "," +　title + "," + userId);
+
+        layer.confirm("确定要删除这条求购信息吗？",function(){
+            $.ajax({
+                url: '/seek/delSeek',
+                type: 'post',
+                data:{'seekId':seekId,'title':title,'userId':userId},
+                success: function(result){
+                    if(result.success){
+                        layer.msg(
+                            result.message,
+                            {
+                                icon:1,
+                                time:1000
+                            },
+                            function(){
+                                // 先得到当前 iframe 层的索引
+                                var index = parent.layer.getFrameIndex(window.name);
+                                // 关闭当前 iframe 层
+                                parent.layer.close(index);
+                            }
+                        );
+                    } else{
+                        layer.msg(
+                            result.message,
+                            {
+                                icon:2,
+                                time:1000
+                            }
+                        );
+                    }
+                },
+                error: function(data){
+                    layer.msg("网络错误！");
+                }
+            });
+        });
+        return false;
+    });
+    // 关闭当前窗口
+    $("#closeBtn").on('click',function(){
+        let index = parent.layer.getFrameIndex(window.name);
+        parent.layer.close(index);
+    });
+</script>
+
+
+</body>
+</html>

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>5xx错误页面</title>
+
+    <style>
+        .status_wrap{
+            margin-top: 150px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .status{
+            font-size: 30px;
+            color: red;
+        }
+        .content{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    </style>
+
+</head>
+<body>
+    <div class="status_wrap">
+        状态码：<span class="status">[[${status}]]</span>
+    </div>
+    <div class="content">
+        服务器已崩溃！！！请联系管理员！！！
+    </div>
+</body>
+</html>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>4xx错误页面</title>
+
+    <style>
+        .status_wrap{
+            margin-top: 150px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .status{
+            font-size: 30px;
+            color: red;
+        }
+        .content{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    </style>
+
+</head>
+<body>
+    <div class="status_wrap">
+        状态码：<span class="status">[[${status}]]</span>
+    </div>
+    <div class="content">
+        客户端请求错误！！！<br/>
+        看到没！看到没！4 开头的，就是你的问题啦，再好好找找去！
+    </div>
+</body>
+</html>

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaojian.pick.mapper.MessageMapper">
+  <resultMap id="BaseResultMap" type="com.xiaojian.pick.entity.Message">
+    <result column="id" jdbcType="INTEGER" property="id" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
+    <result column="content" jdbcType="VARCHAR" property="content" />
+    <result column="state" jdbcType="INTEGER" property="state" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+<!--  加载用户信息  -->
+    <association property="user" javaType="com.xiaojian.pick.entity.Message"
+                 select="com.xiaojian.pick.mapper.UserMapper.findById" column="user_id">
+    </association>
+  </resultMap>
+
+  <sql id="select_param">
+    <where>
+      <if test="title != null and title != ''">
+        title = #{title}
+      </if>
+      <if test="state != null">
+        and state = #{state}
+      </if>
+      <if test="createTime != null">
+        and DATE_FORMAT(create_time,'%Y-%m-%d') = DATE_FORMAT(#{createTime},'%Y-%m-%d')
+      </if>
+      <if test="user != null">
+        <if test="user.id != null and user.id != ''">
+          and user_id = #{user.id}
+        </if>
+      </if>
+    </where>
+  </sql>
+
+<!--  // 查询所有消息-->
+<!--  List<Message> findAll();-->
+  <select id="findAll" resultMap="BaseResultMap">
+    select * from message
+    order by create_time desc
+  </select>
+
+<!--  // 条件查询消息-->
+<!--  List<Message> findByParam(Message message);-->
+  <select id="findByParam" parameterType="com.xiaojian.pick.entity.Message" resultMap="BaseResultMap">
+    select * from message
+    <include refid="select_param"></include>
+    order by create_time desc
+  </select>
+
+<!--  // 根据用户查询消息列表-->
+<!--  List<Message> findByUserId(Integer userId);-->
+  <select id="findByUserId" parameterType="Integer" resultMap="BaseResultMap">
+    select * from message where user_id = #{userId} and state in (0,1)
+    order by state,create_time desc
+  </select>
+<!--  // 根据用户查询未读消息数量-->
+<!--  Long getCountByUserId(Integer userId);-->
+  <select id="getCountByUserId" parameterType="Integer" resultType="Long">
+    select count(*) from message where user_id = #{userId} and state = 0
+  </select>
+
+<!--  // 发布消息-->
+<!--  int publishMsg(Message message);-->
+  <insert id="publishMsg" parameterType="com.xiaojian.pick.entity.Message">
+    insert into message(title,content,user_id,state,create_time)
+    values(#{title},#{content},#{user.id},#{state},#{createTime})
+  </insert>
+
+<!--  // 更改消息状态（0，未读；1，已读；2，删除状态）-->
+<!--  int updateMsgState(Integer userId);-->
+  <update id="updateMsgState" parameterType="com.xiaojian.pick.entity.Message">
+    update message set state = #{state} where id = #{id}
+  </update>
+
+
+
+<!--  // 删除消息（一般根据消息状态为：2，已删除）-->
+<!--  int delMessageByState(Integer state);-->
+  <delete id="delMessageByState" parameterType="Integer">
+    delete from message where state = #{state}
+  </delete>
+
+
+
+</mapper>

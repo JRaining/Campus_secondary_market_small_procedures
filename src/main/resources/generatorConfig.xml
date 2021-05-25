@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+  PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+  "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+
+<generatorConfiguration>
+    <context id="testTables" targetRuntime="MyBatis3">
+        <commentGenerator>
+            <!-- 是否去除自动生成的注释 true：是 ： false:否 -->
+            <property name="suppressAllComments" value="true" />
+        </commentGenerator>
+        <!--mysql8.0+数据库连接的信息：驱动类、连接地址、用户名、密码 -->
+        <!-- 标配:1.驱动类变了；2.url中没有加serverTimezone=GMT%2B8，会报错，时区错误，这里的意思是GMT+8  -->
+        <jdbcConnection
+        	driverClass="com.mysql.cj.jdbc.Driver"
+            connectionURL="jdbc:mysql://localhost:3306/pick?serverTimezone=GMT%2B8"
+            userId="root"
+            password="243600">
+        </jdbcConnection>
+        
+        <!-- 默认false，把JDBC DECIMAL 和 NUMERIC 类型解析为 Integer，为 true时把JDBC DECIMAL
+            和 NUMERIC 类型解析为java.math.BigDecimal -->
+        <javaTypeResolver>
+            <property name="forceBigDecimals" value="false" />
+        </javaTypeResolver>
+
+        <!-- targetPackage:生成PO类的包名 -->
+        <!-- targetProject:生成PO类的位置 -->
+        <javaModelGenerator targetPackage="com.xiaojian.pick.entity"
+            targetProject="src\main\java">
+            <!-- enableSubPackages:是否让schema作为包的后缀 -->
+            <property name="enableSubPackages" value="false" />
+            <!-- 从数据库返回的值被清理前后的空格 -->
+            <property name="trimStrings" value="true" />
+        </javaModelGenerator>
+
+        <!-- targetPackage:生成mapper映射文件的包名 -->
+        <!-- targetProject:mapper映射文件生成的位置 -->
+        <sqlMapGenerator targetPackage="mapper"
+            targetProject="src\main\resources"> <!-- idea中 mapper映射文件要放在resources的mapper下 -->
+            <!-- enableSubPackages:是否让schema作为包的后缀 -->
+            <property name="enableSubPackages" value="false" />
+        </sqlMapGenerator>
+
+        <!-- targetPackage:生成mapper接口的包名 -->
+        <!-- targetPackage：mapper接口生成的位置 -->
+        <javaClientGenerator type="XMLMAPPER"
+            targetPackage="com.xiaojian.pick.mapper"
+            targetProject="src\main\java">
+            <!-- enableSubPackages:是否让schema作为包的后缀 -->
+            <property name="enableSubPackages" value="false" />
+        </javaClientGenerator>
+        
+        <!-- 指定数据库表，指定多少个，写多少个 -->
+<!--        <table tableName="user"></table>-->
+<!--        <table tableName="sys_admin"></table>-->
+<!--        <table tableName="commodity"></table>-->
+<!--        <table tableName="commodity_img"></table>-->
+<!--        <table tableName="category"></table>-->
+<!--        <table tableName="inform"></table>-->
+<!--        <table tableName="wx_access_token"></table>-->
+<!--        <table tableName="seek"></table>-->
+<!--        <table tableName="inform"></table>-->
+<!--        <table tableName="collect"></table>-->
+<!--        <table tableName="message"></table>-->
+<!--        <table tableName="topic"></table>-->
+<!--        <table tableName="topic_img"></table>-->
+<!--        <table tableName="comment"></table>-->
+        <table tableName="attention"></table>
+    </context>
+</generatorConfiguration>

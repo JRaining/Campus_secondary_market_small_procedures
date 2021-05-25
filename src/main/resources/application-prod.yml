@@ -1,0 +1,44 @@
+# 生产环境
+server:
+  port: 80
+  servlet:
+    context-path: /
+# 数据源配置
+spring:
+  datasource:
+    #   数据源基本配置
+    username: root
+    password: "!Qw243600"
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/pick?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull
+    # 数据库连接池类型
+    type: com.alibaba.druid.pool.DruidDataSource
+    # SpringBoot 2.x 必须加配置，才能自动运行创表语句、sql语句
+    initialization-mode: always
+    #   数据源其他配置
+    initialSize: 5
+    minIdle: 5
+    maxActive: 20
+    maxWait: 60000
+    timeBetweenEvictionRunsMillis: 60000
+    minEvictableIdleTimeMillis: 300000
+    validationQuery: SELECT 1 FROM DUAL
+    testWhileIdle: true
+    testOnBorrow: false
+    testOnReturn: false
+    poolPreparedStatements: true
+    #   配置监控统计拦截的filters，去掉后监控界面sql无法统计，stat：监控统计；slf4j：日志；wall：防御sql注入；
+    filters: stat,wall,slf4j
+    maxPoolPreparedStatementPerConnectionSize: 20
+    useGlobalDataSourceStat: true
+    connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=500
+    # 配置 druid 的监控，登陆：localhost:8080/druid
+    druid:
+      stat-view-servlet:
+        login-username: admin
+        login-password: 123
+
+
+# 自定义，图片存放路径
+imgFilePath: /usr/local/pick-project/imgs
+lucenePath: /usr/local/pick-project/lucene

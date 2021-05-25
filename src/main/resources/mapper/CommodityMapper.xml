@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xiaojian.pick.mapper.CommodityMapper" >
+  <resultMap id="BaseResultMap" type="com.xiaojian.pick.entity.Commodity" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="title" property="title" jdbcType="VARCHAR" />
+    <result column="old_price" property="oldPrice" jdbcType="DOUBLE" />
+    <result column="price" property="price" jdbcType="DOUBLE" />
+    <result column="quality" property="quality" jdbcType="VARCHAR" />
+    <result column="repertory" property="repertory" jdbcType="INTEGER" />
+    <result column="click_count" property="clickCount" jdbcType="INTEGER" />
+    <result column="collect_count" property="collectCount" jdbcType="INTEGER" />
+    <result column="state" property="state" jdbcType="INTEGER" />
+    <result column="publish_date" property="publishDate" jdbcType="TIMESTAMP" />
+    <result column="cover_image" property="coverImage" jdbcType="VARCHAR" />
+    <result column="serial" property="serial" jdbcType="VARCHAR" />
+    <result column="swiper" property="swiper" jdbcType="BIT" />
+<!-- 加载商品分类  -->
+    <association property="category" javaType="Category"
+                 select="com.xiaojian.pick.mapper.CategoryMapper.findById" column="category_id">
+    </association>
+<!--  加载用户信息  -->
+    <association property="user" javaType="User"
+                 select="com.xiaojian.pick.mapper.UserMapper.findById" column="user_id">
+    </association>
+  </resultMap>
+
+  <resultMap id="ResultMapWithBLOBs" type="com.xiaojian.pick.entity.Commodity" extends="BaseResultMap" >
+    <result column="description" property="description" jdbcType="LONGVARCHAR" />
+  </resultMap>
+
+  <resultMap id="ResultMapWithImgUrl" type="com.xiaojian.pick.entity.Commodity" extends="ResultMapWithBLOBs" >
+<!-- 加载商品图片列表 -->
+    <collection property="commodityImgList" ofType="CommodityImg"
+            select="com.xiaojian.pick.mapper.CommodityImgMapper.findByCommodityId" column="id">
+    </collection>
+  </resultMap>
+
+<!-- 动态查询条件 -->
+  <sql id="select_param">
+    <where>
+      <if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
+        DATE_FORMAT(publish_date,'%Y-%m-%d') between DATE_FORMAT( #{startTime},'%Y-%m-%d') and DATE_FORMAT( #{endTime},'%Y-%m-%d')
+      </if>
+      <if test="serial != null and serial != ''">
+        and serial = #{serial}
+      </if>
+      <if test="title != null and title != ''">
+        and title like #{title}
+      </if>
+      <if test="state != null and state != ''">
+        and state = #{state}
+      </if>
+      <if test="category != null">
+        <if test="category.id != null and category.id != ''">
+          and category_id = #{category.id}
+        </if>
+      </if>
+      <if test="publishDate != null">
+        and DATE_FORMAT(publish_date,'%Y-%m-%d') = DATE_FORMAT(#{publishDate},'%Y-%m-%d')
+      </if>
+    </where>
+  </sql>
+
+<!-- 根据 id 查询商品 -->
+  <select id="findById" parameterType="Integer" resultMap="ResultMapWithImgUrl">
+    select * from commodity where id = #{id}
+  </select>
+
+<!-- 根据用户 id 查询其发布的商品列表 -->
+  <select id="findByUserId" parameterType="Integer" resultMap="ResultMapWithBLOBs" >
+    select * from commodity where user_id = #{id}
+    order by publish_date desc
+  </select>
+
+<!-- 根据分类 id 查询商品列表 -->
+  <select id="findByCategoryId" parameterType="Integer" resultMap="ResultMapWithBLOBs" >
+    select * from commodity where category_id = #{id}
+  </select>
+
+<!--  // 查询所有出售中的商品-->
+  <select id="findAll" resultMap="ResultMapWithBLOBs">
+    select * from commodity where state = 1
+    order by publish_date desc
+  </select>
+
+<!--  // 分页、分类查询 出售中 的商品列表-->
+<!--  List<Commodity> findByPage(Commodity Commodity);-->
+  <select id="findByPage" parameterType="com.xiaojian.pick.entity.Commodity" resultMap="BaseResultMap">
+    select * from commodity
+    <where>
+        <if test="category != null">
+          <if test="category.id != null and category.id != ''">
+            category_id = #{category.id}
+          </if>
+        </if>
+        <if test="state == null or state != null or state == '' or state != ''">
+          and state = 1
+        </if>
+    </where>
+    order by publish_date desc
+  </select>
+
+<!--  // 根据条件（商品标题 、商品编号、分类）查询 商品列表-->
+  <select id="findByParam" parameterType="com.xiaojian.pick.page.CommodityCustom" resultMap="ResultMapWithBLOBs">
+    select * from commodity
+    <include refid="select_param"></include>
+    order by state,publish_date desc
+  </select>
+<!--  // 获取条件 商品数量-->
+  <select id="getCount" parameterType="com.xiaojian.pick.page.CommodityCustom" resultType="Long">
+    select count(*) from commodity
+    <include refid="select_param"></include>
+  </select>
+
+<!--  // 获取所有 商品图片-->
+  <select id="getCommodityImgList" parameterType="Integer" resultMap="ResultMapWithImgUrl">
+    select id from commodity where id = #{id}
+  </select>
+
+<!-- 添加商品信息 -->
+  <insert id="addCommodity" parameterType="com.xiaojian.pick.entity.Commodity" useGeneratedKeys="true" keyProperty="id">
+    insert into commodity
+    (title,category_id,old_price,price,quality,repertory,click_count,
+    collect_count,description,user_id,state,publish_date,cover_image,serial,swiper)
+    values(#{title},#{category.id},#{oldPrice},#{price},#{quality},#{repertory},#{clickCount},
+    #{collectCount},#{description},#{user.id},#{state},#{publishDate},#{coverImage},#{serial},#{swiper})
+  </insert>
+
+<!--  // 将商品状态改为 下架-->
+  <update id="deleteByid" parameterType="Integer">
+    update commodity set state = 3 where id = #{id}
+  </update>
+<!-- 真 - 删除商品记录 -->
+  <delete id="realDelCommodity" parameterType="Integer">
+    delete from commodity where id = #{id}
+  </delete>
+
+<!-- 修改商品信息，主要修改商品封面图片 -->
+  <update id="updateCoverImgOfCommodity" parameterType="com.xiaojian.pick.entity.Commodity">
+    update commodity
+    <set>
+      <if test="coverImage != null and coverImage != ''">
+        cover_image = #{coverImage}
+      </if>
+    </set>
+    where id = #{id}
+  </update>
+<!-- 修改商品状态（1，出售中；2，售罄；3，下架；4，删除的商品，保留了文本信息） -->
+  <update id="updateCommodityState">
+    update commodity set state = #{state} where id = #{id}
+  </update>
+
+<!--  // 商品点击量 +1-->
+<!--  int addCommodityClick(Integer id);-->
+  <update id="addCommodityClick" parameterType="Integer">
+    UPDATE commodity SET click_count = click_count+1 WHERE id = #{id}
+  </update>
+
+<!--     // 小程序中查看一个用户发布的商品（售出中的）
+    List<Commodity> getUserPublish(Commodity commodity); -->
+  <select id="getUserPublish" parameterType="com.xiaojian.pick.entity.Commodity" resultMap="BaseResultMap">
+        select * from commodity
+        where user_id = #{user.id} and state = #{state}
+        order by publish_date desc
+  </select>
+<!--     // 小程序首页的轮播图
+    List<Commodity> getSwiperCommodity(); -->
+  <select id="getSwiperCommodity" resultMap="BaseResultMap">
+    select * from commodity where swiper = 1 and state = 1
+  </select>
+
+<!--  // 关键字搜索、出售中商品、分页-->
+<!--  List<Commodity> search(String content);-->
+  <select id="search" parameterType="String" resultMap="BaseResultMap">
+    select * from commodity
+    where (serial like #{content} or title like #{content} or description like #{content}) and state = 1
+  </select>
+
+
+<!--//  查询商品发布时间超过 30 天的商品列表
+    List<Commodity> overtimeCommodity();-->
+  <select id="overtimeCommodity" resultMap="BaseResultMap">
+    SELECT * FROM commodity
+    WHERE DATE_FORMAT(NOW(),'%Y-%m-%d') > DATE_SUB(DATE_FORMAT(publish_date,'%Y-%m-%d'),INTERVAL -30 DAY)
+  </select>
+
+<!--  // 根据商品 状态 查询商品列表-->
+<!--  List<Commodity> findByState(Integer state);-->
+  <select id="findByState" parameterType="Integer" resultMap="BaseResultMap" >
+    select * from commodity
+    where state = #{state}
+  </select>
+
+<!--  // 删除商品信息（一般根据商品状态：为4已删除）-->
+<!--  int delCommodityByState(Integer state);-->
+  <delete id="delCommodityByState" parameterType="Integer">
+    delete from commodity
+    where state = #{state}
+  </delete>
+
+</mapper>

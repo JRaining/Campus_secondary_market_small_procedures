@@ -1,0 +1,41 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>商品分类</title>
+    <link rel="stylesheet" href="layui/css/layui.css" th:href="@{/layui/css/layui.css}">
+    <link rel="stylesheet" href="fonts/iconfonts.css" th:href="@{/fonts/iconfonts.css}">
+    <script type="text/javascript" src="js/jquery.min.js" th:src="@{/js/jquery.min.js}"></script>
+    <script type="text/javascript" src="layui/layui.js" th:src="@{/layui/layui.js}"></script>
+    <script type="text/javascript" src="layui/layui.all.js" th:src="@{/layui/layui.all.js}"></script>
+</head>
+<body>
+    <table width="100%" class="layui-hide" id="type" lay-filter="type">
+
+    </table>
+
+<!-- 数据格式 -->
+    <script type="text/html" id="cateIconTpl">
+        {{# if(d.cateIcon != null){ }}
+            <img src="{{d.cateIcon}}" style="width: 25px;height: 25px">
+        {{# } else if(d.cateIcon == null || d.cateIcon == '') { }}
+            <button type="button" class="layui-btn layui-btn-xs layui-btn-normal" id="uploadImg">上传图标</button>
+        {{# } }}
+    </script>
+
+    <!--  头部工具栏  -->
+    <script type="text/html" id="toolbarType">
+        <div class="layui-btn-container">
+            <button class="layui-btn layui-btn-sm layui-btn-normal" lay-event="addCategory">添加分类信息</button>
+            <button class="layui-btn layui-btn-sm layui-btn-primary" lay-event="refresh"><i class="iconfont iconshuaxin"></i>&nbsp;刷新</button>
+        </div>
+    </script>
+    <!--  行内工具栏  -->
+    <script type="text/html" id="barType">
+        <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="edit">编辑</a>
+        <a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="del">删除</a>
+    </script>
+
+    <script type="text/javascript" src="/js/category.js" th:src="@{/js/category.js}"></script>
+</body>
+</html>

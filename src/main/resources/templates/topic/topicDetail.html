@@ -1,0 +1,177 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>帖子详情</title>
+    <link rel="stylesheet" href="layui/css/layui.css" th:href="@{/layui/css/layui.css}">
+    <link rel="stylesheet" href="css/topic.css" th:href="@{/css/topic.css}">
+    <link rel="stylesheet" href="fonts/iconfonts.css" th:href="@{/fonts/iconfonts.css}">
+    <script type="text/javascript" src="js/jquery.min.js" th:src="@{/js/jquery.min.js}"></script>
+    <script type="text/javascript" src="layui/layui.js" th:src="@{/layui/layui.js}"></script>
+    <script type="text/javascript" src="layui/layui.all.js" th:src="@{/layui/layui.all.js}"></script>
+</head>
+<body>
+
+<div class="topic_container">
+    <div class="topic_wrap">
+        <!-- 用户 -->
+        <div class="userInfo">
+            <div class="user_head_img">
+                <img th:src="${topic.user.avatarUrl}" />
+            </div>
+            <div class="nickName">[[${topic.user.nickName}]]</div>
+        </div>
+        <!-- 帖子主体 -->
+        <div class="topic_main">
+            <!-- 帖子标题 -->
+            <div class="topic_title">
+                [[${topic.theme}]]
+            </div>
+            <!-- 关注话题 -->
+            <div class="topic_attention_wrap">
+                <!--  空的 -->
+                <div class="kong"></div>
+                <!-- 发布时间、浏览量、评论量 -->
+                <div class="publish_wrap">
+                    <!-- 发布时间 -->
+                    <div class="publish_date" th:text="${#dates.format(topic.publishDate, 'yyyy-MM-dd HH:mm:ss')}">2020-11-22 01:32:32</div>
+                    <!-- 浏览量、评论数 -->
+                    <div class="count_wrap">
+                        <div class="click_count">
+                            <i class="iconfont iconliulan1"></i>
+                            <span class="count_text"> [[${topic.clickCount}]]</span>
+                        </div>
+                        <div class="line">|</div>
+                        <div class="comment_count">
+                            <i class="iconfont iconpinglun"></i>
+                            <span class="count_text"> [[${topic.commentCount}]]</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 帖子正文 -->
+            <div class="topic_content">
+                [[${topic.description}]]
+            </div>
+            <!-- 图片区 -->
+            <div class="topic_img_wrap">
+                <div class="topic_img_item" th:each="topicImg:${topicImgList}">
+                    <img th:src="${topicImg.imgSrc}">
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- 评论区 -->
+<div class="comment_container">
+    <div class="comment_wrap">
+        <div class="comment_head_title">所有评论</div>
+        <div class="comment_line"></div>
+    <!-- 评论列表 -->
+        <div class="comment_list">
+            <div class="comment_item" th:each="comment:${commentList}">
+                <!-- 左侧：头像 -->
+                <div class="comment_left">
+                    <div class="head_img">
+                        <img th:src="${comment.user.avatarUrl}" />
+                    </div>
+                </div>
+
+                <!-- 右侧 -->
+                <div class="comment_right">
+                    <div class="comment_head">
+                        <div  class="comment_nickName" th:text="${comment.user.nickName}"></div>
+                        <div class="level">[[${commentCount - commentStat.index}]]楼</div>
+                    </div>
+                    <!-- 评论内容 -->
+                    <div class="comment_content" th:text="${comment.content}"></div>
+                    <!-- 时间 -->
+                    <div class="publish_date" th:text="${#dates.format(comment.publishDate, 'yyyy-MM-dd HH:mm:ss')}"></div>
+                </div>
+            </div>
+            <!-- 没有评论 -->
+            <div class="emptyOfComment" th:if="${commentList.size() == 0}">还没有评论~</div>
+        </div>
+    </div>
+</div>
+
+<!-- 处理区 -->
+<div class="btn_wrap">
+    <!-- 该商品 id -->
+    <input type="hidden" id="topicId" th:value="${topic.id}" />
+    <!-- 该商品的标题 -->
+    <input type="hidden" id="theme" th:value="${topic.theme}" />
+    <!-- 商品发布者的 id -->
+    <input type="hidden" id="useId" th:value="${topic.user.id}" />
+    <button type="button" class="layui-btn layui-btn-sm layui-btn-disabled updateBtn" th:if="${topic.state == 0}">
+        已删除
+    </button>
+    <button type="button" id="delCommodity" class="layui-btn layui-btn-sm layui-btn-warm updateBtn" th:if="${topic.state == 1}">
+        删除
+    </button>
+    <button type="button" id="closeBtn" class="layui-btn layui-btn-sm layui-btn-primary">
+        关闭
+    </button>
+</div>
+
+
+
+<script>
+    // 下架商品
+    $("#delCommodity").on('click',function(){
+        let topicId = $("#topicId").val();
+        let theme = $("#theme").val();
+        let userId = $("#useId").val();
+        layer.confirm("确定要删除该帖子吗？",function(){
+            $.ajax({
+                type: 'post',
+                url:'/topic/delTopic',
+                data:{"topicId":topicId,"theme":theme,"userId":userId},
+                success:function(result){
+                    if(result.success){
+                        layer.msg(
+                            result.message,
+                            {
+                                icon:1,
+                                time:1000
+                            },
+                            function(){
+                                // 先得到当前 iframe 层的索引
+                                var index = parent.layer.getFrameIndex(window.name);
+                                // 关闭当前 iframe 层
+                                parent.layer.close(index);
+                                table.reload("topicListTabReload");
+                            }
+                        );
+                    } else{
+                        layer.msg(
+                            result.message,
+                            {
+                                icon:2,
+                                time:1000
+                            }
+                        );
+                    }
+                },
+                error: function(data){
+                    layer.msg("网络错误！");
+                }
+            });
+        });
+        return false;
+    });
+    // 关闭当前窗口
+    $("#closeBtn").on("click",function(){
+        let index = parent.layer.getFrameIndex(window.name);
+        parent.layer.close(index);
+    });
+</script>
+
+
+
+
+</body>
+</html>

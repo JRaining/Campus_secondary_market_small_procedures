@@ -1,0 +1,98 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>用户管理</title>
+    <link rel="stylesheet" href="layui/css/layui.css" th:href="@{/layui/css/layui.css}">
+    <link rel="stylesheet" href="fonts/iconfonts.css" th:href="@{/fonts/iconfonts.css}">
+    <script type="text/javascript" src="js/jquery.min.js" th:src="@{/js/jquery.min.js}"></script>
+    <script type="text/javascript" src="layui/layui.js" th:src="@{/layui/layui.js}"></script>
+</head>
+<body>
+    <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px">
+        <legend>发送消息</legend>
+    </fieldset>
+    <form class="layui-form" id="messageForm" >
+        <!-- 用户 id -->
+        <input type="hidden" name="userId" th:value="${userId}" />
+        <!--  消息主题  -->
+        <div class="layui-form-item" >
+            <label class="layui-form-label">消息主题</label>
+            <div class="layui-input-block" style="width:270px;">
+                <select autocomplete="off" name="title" id="title" lay-verify="required" style="width:270px;">
+                    <option value="通知">通知</option>
+                    <option value="公告">公告</option>
+                </select>
+            </div>
+        </div>
+        <!-- 消息内容 -->
+        <div class="layui-form-item" >
+            <label class="layui-form-label">描述</label>
+            <div class="layui-input-block">
+                <textarea cols="40" rows="8" name="content" style="width:270px;" class="layui-textarea" lay-verify="required" placeholder="在这里填写你要发送的内容..."></textarea>
+            </div>
+        </div>
+        <!-- 提交 -->
+        <div class="layui-form-item" style="text-align: center;margin-top: 20px;">
+            <button class="layui-btn layui-btn-normal layui-btn-radius" lay-submit lay-filter="checkForm" style="width: 300px">
+                立即提交
+            </button>
+        </div>
+    </form>
+
+
+
+    <script>
+        layui.use('form',function () {
+            var form = layui.form;
+
+            form.on('submit(checkForm)',function (data) {
+                var _data = data.field;
+                var title = _data.title;
+                var content = _data.content.trim();
+                var userId = _data.userId;
+                $.ajax({
+                    type: 'post',
+                    url:'/user/sendMsg',
+                    data:{'title':title,'content':content,'userId':userId},
+                    dataType: 'json',
+                    success: function(result){
+                        if(result.success){
+                            layer.msg(
+                                result.message,
+                                {
+                                    icon:1,
+                                    time: 1000
+                                },
+                                function(){
+                                    var index = parent.layer.getFrameIndex(window.name);
+                                    parent.layer.close(index);
+                                }
+                            );
+                        }else{
+                            layer.msg(
+                                result.message,
+                                {
+                                    icon:2,
+                                    time:1000
+                                }
+                            );
+                        }
+                    },
+                    error: function(){
+                        layer.msg(
+                            "网络错误",
+                            {
+                                icon:2,
+                                time:2000
+                            }
+                        );
+                    }
+                });
+                return false;
+            });
+        })
+    </script>
+
+</body>
+</html>

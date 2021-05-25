@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xiaojian.pick.mapper.CollectMapper" >
+  <resultMap id="BaseResultMap" type="com.xiaojian.pick.entity.Collect" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+<!--  加载用户信息  -->
+    <association property="user" javaType="com.xiaojian.pick.entity.User">
+      <id column="id" property="id" />
+    </association>
+<!--  加载商品信息  -->
+    <association property="commodity" javaType="com.xiaojian.pick.entity.Commodity"
+                select="com.xiaojian.pick.mapper.CommodityMapper.findById" column="commodity_id">
+    </association>
+  </resultMap>
+
+<!--  // 根据用户 id 查询-->
+<!--  Collect findByUserId(Integer userId);-->
+  <select id="findByUserId" parameterType="Integer" resultMap="BaseResultMap">
+    select * from collect where user_id = #{userId}
+    order by create_time desc
+  </select>
+<!--  // 商品id、用户id查询收藏信息-->
+<!--  Collect findCollect(Collect collect);-->
+  <select id="findCollect" parameterType="com.xiaojian.pick.entity.Collect" resultMap="BaseResultMap">
+    select * from collect where commodity_id = #{commodity.id} and user_id = #{user.id}
+  </select>
+
+
+<!--  // 用户收藏列表，删除收藏-->
+<!--  int deleteCollect(Integer id);-->
+  <delete id="deleteCollect" parameterType="Integer">
+    delete from collect
+    where id = #{id}
+  </delete>
+<!--  // 商品详情页面，取消收藏-->
+<!--  int cancelCollect(Collect collect);-->
+  <delete id="cancelCollect" parameterType="com.xiaojian.pick.entity.Collect">
+    delete from collect
+    where commodity_id = #{commodity.id} and user_id = #{user.id}
+  </delete>
+
+<!--  // 添加收藏信息-->
+<!--  int addCollect(Collect collect);-->
+  <insert id="addCollect" parameterType="com.xiaojian.pick.entity.Collect">
+    insert into collect(commodity_id,user_id,create_time)
+    values(#{commodity.id},#{user.id},#{createTime})
+  </insert>
+
+<!--  //  根据 commodity_id 删除收藏记录-->
+<!--  int deleteByCommodityId(List<Integer> commodityId);-->
+  <delete id="deleteByCommodityId">
+    delete from collect where commodity_id in
+    <foreach collection="list" item="id" open="(" close=")" separator=",">
+      #{id}
+    </foreach>
+  </delete>
+
+
+</mapper>

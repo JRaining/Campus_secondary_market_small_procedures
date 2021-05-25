@@ -1,0 +1,104 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>挑啊！</title>
+    <link rel="stylesheet" href="layui/css/layui.css" th:href="@{/layui/css/layui.css}">
+    <link rel="stylesheet" href="fonts/iconfonts.css" th:href="@{/fonts/iconfonts.css}">
+
+</head>
+<body>
+<div class="layui-layout layui-layout-admin">
+    <div class="layui-header">
+        <div class="layui-logo">挑啊</div>
+        <ul class="layui-nav layui-layout-right">
+            <li class="layui-nav-item">
+                <a href="javascript:;">
+                    <img src="images/raining.jpg" th:src="@{/images/raining.jpg}" class="layui-nav-img">
+                    <span th:if="${session.currentUser != null}">[[${session.currentUser.username}]]</span>
+                    <span th:if="${session.currentUser == null}">admin</span>
+                </a>
+            </li>
+            <li class="layui-nav-item"><a href="javascript:logout()">退了</a></li>
+        </ul>
+    </div>
+
+    <div class="layui-side layui-bg-black">
+        <div class="layui-side-scroll">
+            <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+            <ul class="layui-nav layui-nav-tree"  lay-filter="test">
+                <li class="layui-nav-item layui-nav-itemed">
+                    <a class="" href="javascript:;">商品管理</a>
+                    <dl class="layui-nav-child">
+                        <dd>
+                            <a class="site-demo-active" data-type="tabAdd" data-id="commodityList" data-url="/commodity/toCommodity" data-title="商品列表" href="javascript:;">商品列表</a>
+                        </dd>
+<!--                        <dd>-->
+<!--                            <a class="site-demo-active" data-type="tabAdd" data-id="commodityDetail" data-url="" data-title="商品图片" href="javascript:;">商品图片展示</a>-->
+<!--                        </dd>-->
+                        <dd>
+                            <a class="site-demo-active" data-type="tabAdd" data-id="category" data-url="/category/toCategory" data-title="商品分类" href="javascript:;">商品分类</a>
+                        </dd>
+                        <dd>
+                            <a class="site-demo-active" data-type="tabAdd" data-id="seek" data-url="/seek/toSeek" data-title="求购列表" href="javascript:;">求购中心</a>
+                        </dd>
+                    </dl>
+                </li>
+                <li class="layui-nav-item">
+                    <a href="javascript:;">论坛管理</a>
+                    <dl class="layui-nav-child">
+                        <dd>
+                            <a class="site-demo-active" data-type="tabAdd" data-id="topicList" data-url="/topic/toTopic" data-title="帖子列表" href="javascript:;">帖子列表</a>
+                        </dd>
+                    </dl>
+                </li>
+                <li class="layui-nav-item">
+                    <a href="javascript:;">用户管理</a>
+                    <dl class="layui-nav-child">
+                        <dd>
+                            <a class="site-demo-active" data-type="tabAdd" data-id="userList" data-url="/user/toUser" data-title="用户列表" href="javascript:;">用户列表</a>
+                        </dd>
+                    </dl>
+                </li>
+                <li class="layui-nav-item">
+                    <a href="javascript:;">附加功能</a>
+                    <dl class="layui-nav-child">
+                        <a class="site-demo-active" data-type="tabAdd" data-id="undetermined1" data-url="" data-title="待定1" href="javascript:;">待定1</a>
+                        <a class="site-demo-active" data-type="tabAdd" data-id="undetermined2" data-url="" data-title="待定2" href="javascript:;">待定2</a>
+                    </dl>
+                </li>
+                <li class="layui-nav-item">
+                    <a class="site-demo-active" data-type="tabAdd" data-id="inform" data-url="/inform/toInform" data-title="举报信息" href="javascript:;">
+                        举报信息
+                        <span class="layui-badge" th:if="${informCount > 0}">[[${informCount}]]</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="layui-body">
+        <!-- 内容主体区域 -->
+        <div class="layui-tab" lay-filter="demo" lay-allowclose="true">
+            <ul class="layui-tab-title">
+                <li class="layui-this" lay-id="index">首页</li>
+            </ul>
+            <div class="layui-tab-content">
+                <div class="layui-tab-item layui-show">
+                    <iframe src="/main" style="width:100%;height: 610px;" scrolling="no" frameborder="0" ></iframe>
+                </div>
+            </div>
+        </div>
+        <!--   内容主体 end -->
+    </div>
+
+</div>
+
+<script type="text/javascript" src="js/jquery.min.js" th:src="@{/js/jquery.min.js}"></script>
+<script type="text/javascript" src="layui/layui.js" th:src="@{/layui/layui.js}"></script>
+<script type="text/javascript" src="layui/layui.all.js" th:src="@{/layui/layui.all.js}"></script>
+<script type="text/javascript" src="js/index.js" th:src="@{/js/index.js}"></script>
+
+</body>
+</html>

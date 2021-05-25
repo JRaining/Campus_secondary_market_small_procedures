@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xiaojian.pick.mapper.TopicImgMapper" >
+  <resultMap id="BaseResultMap" type="com.xiaojian.pick.entity.TopicImg" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="img_src" property="imgSrc" jdbcType="VARCHAR" />
+    <result column="topic_id" property="topicId" jdbcType="INTEGER" />
+  </resultMap>
+
+<!--  // 根据Topic id 查询-->
+<!--  List<TopicImg> findByTopicId(Integer topicId);-->
+  <select id="findByTopicId" parameterType="Integer" resultMap="BaseResultMap">
+    select * from topic_img where topic_id = #{id}
+  </select>
+
+<!--  // 添加帖子图片-->
+<!--  int addTopicImg(TopicImg topicImg);-->
+  <insert id="addTopicImg" parameterType="com.xiaojian.pick.entity.TopicImg">
+    insert into topic_img(img_src, topic_id)
+    values(#{imgSrc},#{topicId})
+  </insert>
+
+<!--  // 删除帖子图片记录-->
+<!--  int deleteByTopicId(Integer topicId);-->
+  <delete id="deleteByTopicId">
+    delete from topic_img where topic_id in
+    <foreach collection="list" item="id" open="(" close=")" separator=",">
+      #{id}
+    </foreach>
+  </delete>
+
+</mapper>
